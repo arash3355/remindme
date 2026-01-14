@@ -14,46 +14,47 @@ class SplashScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Column(
             children: [
-              const Spacer(),
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.06),
-                ),
-                alignment: Alignment.center,
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/remindme_logo.png',
-                    width: 56,
-                    height: 56,
-                    fit: BoxFit.contain,
-                  ),
+              const Spacer(flex: 3),
+
+              // ✅ Logo Transparan (NO circle background)
+              Center(
+                child: Image.asset(
+                  'assets/images/remindme_logo.png',
+                  width: 130,
+                  height: 130,
+                  fit: BoxFit.contain,
                 ),
               ),
 
               const SizedBox(height: 18),
+
               const Text(
                 'RemindMe',
                 style: TextStyle(
-                  fontSize: 42,
+                  fontSize: 48,
                   fontWeight: FontWeight.w300,
                   color: AppColors.primary,
+                  letterSpacing: 0.8,
                 ),
               ),
-              const SizedBox(height: 8),
+
+              const SizedBox(height: 10),
+
               Text(
                 'Never forget your task',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.white.withOpacity(0.65),
+                  color: Colors.white.withOpacity(0.70),
+                  letterSpacing: 0.4,
                 ),
               ),
-              const Spacer(),
+
+              const Spacer(flex: 4),
+
+              // ✅ button lebih presisi
               SizedBox(
-                width: 210,
-                height: 52,
+                width: double.infinity,
+                height: 56,
                 child: ElevatedButton(
                   onPressed: onGetStarted,
                   style: ElevatedButton.styleFrom(
@@ -61,16 +62,18 @@ class SplashScreen extends StatelessWidget {
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   child: const Text(
                     'Get Started',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
+
+              const SizedBox(height: 16),
+
               Text(
                 'App Version 1.0\n© Abdul Rahman Shalehudin - 22552011002',
                 textAlign: TextAlign.center,
@@ -80,7 +83,8 @@ class SplashScreen extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 10),
+
+              const SizedBox(height: 12),
             ],
           ),
         ),

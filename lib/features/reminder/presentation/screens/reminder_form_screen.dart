@@ -1,3 +1,4 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -122,126 +123,161 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
     final timeText = DateFormat('HH:mm').format(_dueDate);
 
     return GradientScaffold(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            GestureDetector(
-              onTap: () => context.pop(),
-              child: const Text(
-                '< Back',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textDark,
+      child: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.fromLTRB(
+                20,
+                8,
+                20,
+                18 +
+                    MediaQuery.of(context).viewInsets.bottom, // ✅ anti overflow
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight - 8,
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      GestureDetector(
+                        onTap: () => context.pop(),
+                        child: const Text(
+                          '< Back',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textDark,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 18),
+
+                      Text(
+                        'Details Reminder',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: AppColors.textDark.withOpacity(0.7),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      _Card(
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              _TextFieldBlock(
+                                label: 'Title',
+                                controller: _titleCtrl,
+                              ),
+                              const SizedBox(height: 12),
+                              _TextFieldBlock(
+                                label: 'Body',
+                                controller: _noteCtrl,
+                                maxLines: 2,
+                              ),
+                              const SizedBox(height: 12),
+                              _DropdownBlock(
+                                label: 'Category',
+                                value: _category,
+                                items: const [
+                                  'Study',
+                                  'Work',
+                                  'Personal',
+                                  'Health',
+                                  'Finance',
+                                ],
+                                onChanged: (v) => setState(() => _category = v),
+                                dotColor: _dotColor(_category),
+                                trailingIcon: BootstrapIcons.chevron_down,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 22),
+
+                      Text(
+                        'Timing',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: AppColors.textDark.withOpacity(0.7),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      _Card(
+                        child: Column(
+                          children: [
+                            _PickerRow(
+                              label: 'Due Date',
+                              value: dateText,
+                              icon: BootstrapIcons.calendar_event,
+                              onTap: _pickDate,
+                            ),
+                            const SizedBox(height: 12),
+                            _PickerRow(
+                              label: 'Time & Reminder',
+                              value: timeText,
+                              icon: BootstrapIcons.clock,
+                              onTap: _pickTime,
+                            ),
+                            const SizedBox(height: 12),
+                            _DropdownBlock(
+                              label: 'Repeat Reminder',
+                              value: _repeat,
+                              items: const [
+                                'No Repeat',
+                                'Daily',
+                                'Monthly',
+                                'Yearly',
+                              ],
+                              onChanged: (v) => setState(() => _repeat = v),
+                              trailingIcon: BootstrapIcons.arrow_repeat,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // ✅ tombol tetap cakep + aman dari overflow
+                      SizedBox(
+                        height: 54,
+                        child: ElevatedButton(
+                          onPressed: _submit,
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            isEdit ? 'Save Change' : 'Save',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+                      const Signature(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              'Details Reminder',
-              style: TextStyle(
-                fontSize: 18,
-                color: AppColors.textDark.withOpacity(0.7),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            _Card(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    _TextFieldBlock(label: 'Title', controller: _titleCtrl),
-                    const SizedBox(height: 12),
-                    _TextFieldBlock(
-                      label: 'Body',
-                      controller: _noteCtrl,
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 12),
-                    _DropdownBlock(
-                      label: 'Category',
-                      value: _category,
-                      items: const [
-                        'Study',
-                        'Work',
-                        'Personal',
-                        'Health',
-                        'Finance',
-                      ],
-                      onChanged: (v) => setState(() => _category = v),
-                      dotColor: _dotColor(_category),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 22),
-            Text(
-              'Timing',
-              style: TextStyle(
-                fontSize: 18,
-                color: AppColors.textDark.withOpacity(0.7),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            _Card(
-              child: Column(
-                children: [
-                  _PickerRow(
-                    label: 'Due Date',
-                    value: dateText,
-                    icon: Icons.calendar_month,
-                    onTap: _pickDate,
-                  ),
-                  const SizedBox(height: 12),
-                  _PickerRow(
-                    label: 'Time & Reminder',
-                    value: timeText,
-                    icon: Icons.circle,
-                    iconSize: 14,
-                    onTap: _pickTime,
-                  ),
-                  const SizedBox(height: 12),
-                  _DropdownBlock(
-                    label: 'Repeat Reminder',
-                    value: _repeat,
-                    items: const ['No Repeat', 'Daily', 'Monthly', 'Yearly'],
-                    onChanged: (v) => setState(() => _repeat = v),
-                    trailingIcon: Icons.repeat,
-                  ),
-                ],
-              ),
-            ),
-
-            const Spacer(),
-            SizedBox(
-              height: 54,
-              child: ElevatedButton(
-                onPressed: _submit,
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  isEdit ? 'Save Change' : 'Save',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            const Signature(),
-          ],
+            );
+          },
         ),
       ),
     );
@@ -305,6 +341,7 @@ class _TextFieldBlock extends StatelessWidget {
       TextFormField(
         controller: controller,
         maxLines: maxLines,
+        style: const TextStyle(fontSize: 15, color: AppColors.textDark),
         decoration: const InputDecoration(
           isDense: true,
           border: InputBorder.none,
@@ -367,8 +404,9 @@ class _DropdownBlock extends StatelessWidget {
           ],
           const Spacer(),
           Icon(
-            trailingIcon ?? Icons.arrow_drop_down,
+            trailingIcon ?? BootstrapIcons.chevron_down,
             color: AppColors.textDark,
+            size: 18,
           ),
         ],
       ),
@@ -383,14 +421,12 @@ class _PickerRow extends StatelessWidget {
     required this.value,
     required this.icon,
     required this.onTap,
-    this.iconSize = 20,
   });
 
   final String label;
   final String value;
   final IconData icon;
   final VoidCallback onTap;
-  final double iconSize;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -410,11 +446,7 @@ class _PickerRow extends StatelessWidget {
               style: const TextStyle(fontSize: 15, color: AppColors.textDark),
             ),
             const Spacer(),
-            Icon(
-              icon,
-              size: iconSize,
-              color: AppColors.textDark.withOpacity(0.8),
-            ),
+            Icon(icon, size: 18, color: AppColors.textDark.withOpacity(0.8)),
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/widgets.dart';
@@ -11,9 +12,12 @@ import '../../provider/reminder_provider.dart';
 class ReminderListScreen extends ConsumerWidget {
   const ReminderListScreen({
     super.key,
-    required Future<Object?> Function() onCreate,
-    required Future<Object?> Function(Reminder) onOpenDetail,
+    required this.onCreate,
+    required this.onOpenDetail,
   });
+
+  final Future<Object?> Function() onCreate;
+  final Future<Object?> Function(Reminder) onOpenDetail;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,11 +43,12 @@ class ReminderListScreen extends ConsumerWidget {
                 ),
                 IconButton(
                   onPressed: () => context.push('/profile'),
-                  icon: const Icon(Icons.account_circle, size: 40),
+                  icon: const Icon(BootstrapIcons.person_circle, size: 34),
                   color: AppColors.textDark,
                 ),
               ],
             ),
+
             const SizedBox(height: 12),
 
             Row(
@@ -57,6 +62,7 @@ class ReminderListScreen extends ConsumerWidget {
                   ),
                 ),
                 const Spacer(),
+
                 PopupMenuButton<String>(
                   onSelected: (v) =>
                       ref.read(remindersProvider.notifier).setCategory(v),
@@ -118,9 +124,8 @@ class ReminderListScreen extends ConsumerWidget {
 
                   final sorted = [...items]
                     ..sort((a, b) {
-                      if (a.isDone == b.isDone) {
+                      if (a.isDone == b.isDone)
                         return a.dueDate.compareTo(b.dueDate);
-                      }
                       return a.isDone ? 1 : -1;
                     });
 
@@ -130,13 +135,15 @@ class ReminderListScreen extends ConsumerWidget {
                     separatorBuilder: (_, __) => const SizedBox(height: 14),
                     itemBuilder: (context, i) {
                       if (i == sorted.length) return const Signature();
+
                       final r = sorted[i];
+                      final timeText =
+                          '${DateFormat('MMMM dd - HH:mm').format(r.dueDate)} WIB';
 
                       return _TaskCard(
                         reminder: r,
                         borderColor: _borderByCategory(r.category),
-                        timeText:
-                            '${DateFormat('MMMM dd - HH:mm').format(r.dueDate)} WIB',
+                        timeText: timeText,
                         onTap: () => context.push('/edit', extra: r),
                         onToggleDone: () =>
                             ref.read(remindersProvider.notifier).toggleDone(r),
@@ -171,8 +178,6 @@ class ReminderListScreen extends ConsumerWidget {
     }
   }
 }
-
-/* ---------- Tile Widgets ---------- */
 
 class _TaskCard extends StatelessWidget {
   const _TaskCard({
@@ -222,11 +227,16 @@ class _TaskCard extends StatelessWidget {
                         : Colors.transparent,
                   ),
                   child: reminder.isDone
-                      ? const Icon(Icons.check, size: 16, color: Colors.white)
+                      ? const Icon(
+                          BootstrapIcons.check2,
+                          size: 15,
+                          color: Colors.white,
+                        )
                       : null,
                 ),
               ),
               const SizedBox(width: 12),
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,9 +278,10 @@ class _TaskCard extends StatelessWidget {
                   ],
                 ),
               ),
+
               IconButton(
                 onPressed: onDelete,
-                icon: const Icon(Icons.delete_outline),
+                icon: const Icon(BootstrapIcons.trash3),
                 color: AppColors.textDark.withOpacity(0.75),
               ),
             ],

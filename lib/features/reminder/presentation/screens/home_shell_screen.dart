@@ -15,37 +15,74 @@ class HomeShellScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final index = _indexFromLocation(context);
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: child,
+
+      // ✅ Bottom nav lebih center dan presisi
       bottomNavigationBar: SizedBox(
-        height: 78,
+        height: 82,
         child: Container(
-          height: 62,
-          padding: const EdgeInsets.symmetric(horizontal: 36),
-          color: AppColors.navy,
+          height: 70,
+          decoration: const BoxDecoration(color: AppColors.navy),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _NavItem(icon: Icons.task_alt, label: 'Task', selected: index == 0, onTap: () => context.go('/tasks')),
-              const SizedBox(width: 70),
-              _NavItem(icon: Icons.calendar_month, label: 'Calender', selected: index == 1, onTap: () => context.go('/calendar')),
+              // ✅ kiri dibuat expanded biar bisa center
+              Expanded(
+                child: _NavItem(
+                  icon: Icons.task_alt,
+                  label: 'Task',
+                  selected: index == 0,
+                  onTap: () => context.go('/tasks'),
+                ),
+              ),
+
+              // Space FAB di tengah
+              const SizedBox(width: 78),
+
+              // ✅ kanan dibuat expanded biar bisa center juga
+              Expanded(
+                child: _NavItem(
+                  icon: Icons.calendar_month,
+                  label: 'Calendar',
+                  selected: index == 1,
+                  onTap: () => context.go('/calendar'),
+                ),
+              ),
             ],
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        onPressed: () => context.push('/create'),
-        child: const Icon(Icons.add, size: 34, color: Colors.white),
+
+      // ✅ FAB tetap di tengah
+      floatingActionButton: SizedBox(
+        width: 72,
+        height: 72,
+        child: FloatingActionButton(
+          backgroundColor: AppColors.primary,
+          elevation: 6,
+          onPressed: () => context.push('/create'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: const Icon(Icons.add, size: 36, color: Colors.white),
+        ),
       ),
+
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
 
 class _NavItem extends StatelessWidget {
-  const _NavItem({required this.icon, required this.label, required this.selected, required this.onTap});
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
   final IconData icon;
   final String label;
   final bool selected;
@@ -53,15 +90,29 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final color = selected ? AppColors.primary : Colors.white;
+
+    return InkWell(
       onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: selected ? AppColors.primary : Colors.white, size: 26),
-          const SizedBox(height: 4),
-          Text(label, style: TextStyle(color: selected ? AppColors.primary : Colors.white, fontSize: 12)),
-        ],
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: color, size: 26),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
