@@ -16,7 +16,6 @@ class SplashScreen extends StatelessWidget {
             children: [
               const Spacer(flex: 3),
 
-              // ✅ Logo Transparan (NO circle background)
               Center(
                 child: Image.asset(
                   'assets/images/remindme_logo.png',
@@ -51,7 +50,6 @@ class SplashScreen extends StatelessWidget {
 
               const Spacer(flex: 4),
 
-              // ✅ button lebih presisi
               SizedBox(
                 width: double.infinity,
                 height: 56,

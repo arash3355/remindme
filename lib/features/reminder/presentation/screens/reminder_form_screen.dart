@@ -132,8 +132,7 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
                 20,
                 8,
                 20,
-                18 +
-                    MediaQuery.of(context).viewInsets.bottom, // ✅ anti overflow
+                18 + MediaQuery.of(context).viewInsets.bottom,
               ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
@@ -247,7 +246,6 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
 
                       const SizedBox(height: 20),
 
-                      // ✅ tombol tetap cakep + aman dari overflow
                       SizedBox(
                         height: 54,
                         child: ElevatedButton(
@@ -300,8 +298,6 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
     }
   }
 }
-
-/* ---------- UI Helpers ---------- */
 
 class _Card extends StatelessWidget {
   const _Card({required this.child});

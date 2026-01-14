@@ -20,7 +20,6 @@ class HomeShellScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: child,
 
-      // ✅ Bottom nav lebih center dan presisi
       bottomNavigationBar: SizedBox(
         height: 82,
         child: Container(
@@ -28,7 +27,6 @@ class HomeShellScreen extends StatelessWidget {
           decoration: const BoxDecoration(color: AppColors.navy),
           child: Row(
             children: [
-              // ✅ kiri dibuat expanded biar bisa center
               Expanded(
                 child: _NavItem(
                   icon: Icons.task_alt,
@@ -38,10 +36,8 @@ class HomeShellScreen extends StatelessWidget {
                 ),
               ),
 
-              // Space FAB di tengah
               const SizedBox(width: 78),
 
-              // ✅ kanan dibuat expanded biar bisa center juga
               Expanded(
                 child: _NavItem(
                   icon: Icons.calendar_month,
@@ -55,7 +51,6 @@ class HomeShellScreen extends StatelessWidget {
         ),
       ),
 
-      // ✅ FAB tetap di tengah
       floatingActionButton: SizedBox(
         width: 72,
         height: 72,
