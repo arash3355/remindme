@@ -1,0 +1,22 @@
+import 'package:remindme/features/reminder/domain/entities/reminder.dart';
+
+abstract class ReminderRepository {
+  Future<List<Reminder>> fetchReminders();
+
+  Future<void> createReminder({
+    required String title,
+    String? note,
+    required DateTime dueDate,
+    required String category,
+  });
+
+  Future<void> markDone({required String id, required bool done});
+
+  Future<void> updateReminder({
+    required String id,
+    required String title,
+    String? note,
+    required DateTime dueDate,
+    required String category,
+  });
+}
