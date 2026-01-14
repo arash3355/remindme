@@ -1,16 +1,23 @@
-# remindme
+# RemindMe — Flutter Reminder App
 
-A new Flutter project.
+RemindMe adalah aplikasi mobile berbasis Flutter untuk membuat dan mengelola reminder/tugas, dengan fitur checklist selesai, filter kategori, tampilan kalender, serta integrasi client-server menggunakan Supabase.
 
-## Getting Started
+## Features
+- Splash screen + Get Started
+- Reminder list (kategori + checklist done + delete)
+- Create & Edit reminder
+- Calendar view (marker reminder pada tanggal)
+- Client-server with Supabase
 
-This project is a starting point for a Flutter application.
+## Demo
+- App Link: [Remindme.apk](..)
+- Video Demo: [Video Demo](..)
 
-A few resources to get you started if this is your first Flutter project:
+## Tech Stack
+- Flutter
+- Riverpod (State Management)
+- GoRouter (Navigation)
+- Supabase (Backend & Database)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Author
+© Abdul Rahman Shalehudin — 22552011002
