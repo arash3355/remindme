@@ -122,35 +122,89 @@ class ReminderListScreen extends ConsumerWidget {
                     );
                   }
 
-                  final sorted = [...items]
-                    ..sort((a, b) {
-                      if (a.isDone == b.isDone)
-                        return a.dueDate.compareTo(b.dueDate);
-                      return a.isDone ? 1 : -1;
-                    });
+                  final activeTasks = items.where((e) => !e.isDone).toList()
+                    ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
 
-                  return ListView.separated(
+                  final completedTasks = items.where((e) => e.isDone).toList()
+                    ..sort((a, b) => b.dueDate.compareTo(a.dueDate));
+
+                  return ListView(
                     padding: const EdgeInsets.only(bottom: 90),
-                    itemCount: sorted.length + 1,
-                    separatorBuilder: (_, __) => const SizedBox(height: 14),
-                    itemBuilder: (context, i) {
-                      if (i == sorted.length) return const Signature();
+                    children: [
+                      if (activeTasks.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          'Upcoming Task',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textDark.withOpacity(0.65),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
 
-                      final r = sorted[i];
-                      final timeText =
-                          '${DateFormat('MMMM dd - HH:mm').format(r.dueDate)} WIB';
+                        ...activeTasks.map((r) {
+                          final timeText =
+                              '${DateFormat('MMMM dd - HH:mm').format(r.dueDate)} WIB';
 
-                      return _TaskCard(
-                        reminder: r,
-                        borderColor: _borderByCategory(r.category),
-                        timeText: timeText,
-                        onTap: () => context.push('/edit', extra: r),
-                        onToggleDone: () =>
-                            ref.read(remindersProvider.notifier).toggleDone(r),
-                        onDelete: () =>
-                            ref.read(remindersProvider.notifier).delete(r),
-                      );
-                    },
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: _TaskCard(
+                              reminder: r,
+                              borderColor: _borderByCategory(r.category),
+                              timeText: timeText,
+                              onTap: () => context.push('/edit', extra: r),
+                              onToggleDone: () => ref
+                                  .read(remindersProvider.notifier)
+                                  .toggleDone(r),
+                              onDelete: () => ref
+                                  .read(remindersProvider.notifier)
+                                  .delete(r),
+                            ),
+                          );
+                        }),
+                      ],
+
+                      if (completedTasks.isNotEmpty) ...[
+                        const SizedBox(height: 18),
+                        Text(
+                          'Completed Task',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textDark.withOpacity(0.45),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+                        ...completedTasks.map((r) {
+                          final timeText =
+                              '${DateFormat('MMMM dd - HH:mm').format(r.dueDate)} WIB';
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: Opacity(
+                              opacity: 0.55,
+                              child: _TaskCard(
+                                reminder: r,
+                                borderColor: _borderByCategory(r.category),
+                                timeText: timeText,
+                                onTap: () => context.push('/edit', extra: r),
+                                onToggleDone: () => ref
+                                    .read(remindersProvider.notifier)
+                                    .toggleDone(r),
+                                onDelete: () => ref
+                                    .read(remindersProvider.notifier)
+                                    .delete(r),
+                              ),
+                            ),
+                          );
+                        }),
+                      ],
+
+                      const SizedBox(height: 10),
+                      const Signature(),
+                    ],
                   );
                 },
               ),
@@ -198,44 +252,37 @@ class _TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitle = reminder.note ?? '';
-
     return Material(
-      color: Colors.white.withOpacity(0.82),
-      borderRadius: BorderRadius.circular(16),
+      color: Colors.white.withOpacity(0.88),
+      borderRadius: BorderRadius.circular(14),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: borderColor, width: 2),
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
                 onTap: onToggleDone,
                 child: Container(
                   width: 22,
                   height: 22,
+                  margin: const EdgeInsets.only(top: 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.primary, width: 3),
+                    border: Border.all(color: AppColors.primary, width: 2.5),
                     color: reminder.isDone
                         ? AppColors.primary
                         : Colors.transparent,
                   ),
                   child: reminder.isDone
-                      ? const Icon(
-                          BootstrapIcons.check2,
-                          size: 15,
-                          color: Colors.white,
-                        )
+                      ? const Icon(Icons.check, size: 14, color: Colors.white)
                       : null,
                 ),
               ),
-              const SizedBox(width: 12),
+
+              const SizedBox(width: 10),
 
               Expanded(
                 child: Column(
@@ -244,7 +291,7 @@ class _TaskCard extends StatelessWidget {
                     Text(
                       reminder.title,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textDark,
                         decoration: reminder.isDone
@@ -252,26 +299,27 @@ class _TaskCard extends StatelessWidget {
                             : null,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle.isEmpty ? '-' : subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textDark.withOpacity(0.85),
-                        decoration: reminder.isDone
-                            ? TextDecoration.lineThrough
-                            : null,
+                    if ((reminder.note ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        reminder.note!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textDark.withOpacity(0.7),
+                          decoration: reminder.isDone
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
                       ),
-                    ),
+                    ],
                     const SizedBox(height: 2),
                     Text(
                       timeText,
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
                         color: borderColor,
                       ),
                     ),
@@ -279,10 +327,14 @@ class _TaskCard extends StatelessWidget {
                 ),
               ),
 
-              IconButton(
-                onPressed: onDelete,
-                icon: const Icon(BootstrapIcons.trash3),
-                color: AppColors.textDark.withOpacity(0.75),
+              Container(
+                width: 4,
+                height: 46,
+                margin: const EdgeInsets.only(left: 10, top: 6),
+                decoration: BoxDecoration(
+                  color: borderColor,
+                  borderRadius: BorderRadius.circular(6),
+                ),
               ),
             ],
           ),

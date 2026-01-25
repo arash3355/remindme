@@ -55,7 +55,7 @@ final class ReminderRepositoryProvider
 }
 
 String _$reminderRepositoryHash() =>
-    r'9147ea2fcd4f839e02f05e2a3006ca6bb9359446';
+    r'05a4a234567bec088bc059d6a2dcecd630d568a5';
 
 @ProviderFor(Reminders)
 final remindersProvider = RemindersProvider._();

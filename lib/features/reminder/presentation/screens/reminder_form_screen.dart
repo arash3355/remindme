@@ -267,6 +267,32 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
                           ),
                         ),
                       ),
+                      if (isEdit) ...[
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 48,
+                          child: OutlinedButton(
+                            onPressed: () async {
+                              await ref
+                                  .read(remindersProvider.notifier)
+                                  .delete(widget.editingReminder!);
+
+                              if (mounted) context.pop();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.red,
+                              side: const BorderSide(color: Colors.red),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Delete Reminder',
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                        ),
+                      ],
 
                       const SizedBox(height: 10),
                       const Signature(),
