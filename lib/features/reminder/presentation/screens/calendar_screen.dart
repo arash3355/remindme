@@ -2,6 +2,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:remindme/features/reminder/presentation/widgets/task_card.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -19,6 +20,44 @@ class CalendarScreen extends ConsumerStatefulWidget {
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+
+  Color _categoryDotColor(List<Reminder> reminders) {
+    if (reminders.isEmpty) return AppColors.purple;
+
+    final category = reminders.first.category.toLowerCase();
+
+    switch (category) {
+      case 'study':
+        return AppColors.purple;
+      case 'work':
+        return AppColors.blue;
+      case 'health':
+        return AppColors.red;
+      case 'personal':
+        return Colors.green;
+      case 'finance':
+        return Colors.orange;
+      default:
+        return AppColors.purple;
+    }
+  }
+
+  Color _borderByCategory(String category) {
+    switch (category.toLowerCase()) {
+      case 'study':
+        return AppColors.purple;
+      case 'work':
+        return AppColors.blue;
+      case 'health':
+        return AppColors.red;
+      case 'personal':
+        return Colors.green;
+      case 'finance':
+        return Colors.orange;
+      default:
+        return AppColors.purple;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,8 +182,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                   child: Container(
                                     width: 9,
                                     height: 9,
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.purple,
+                                    decoration: BoxDecoration(
+                                      color: _categoryDotColor(
+                                        events.cast<Reminder>(),
+                                      ),
                                       shape: BoxShape.circle,
                                     ),
                                   ),
@@ -195,54 +236,18 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                     final timeText =
                                         '${DateFormat('MMMM dd - HH:mm').format(r.dueDate)} WIB';
 
-                                    return Material(
-                                      color: Colors.white.withOpacity(0.82),
-                                      borderRadius: BorderRadius.circular(16),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 14,
-                                          vertical: 12,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
-                                          border: Border.all(
-                                            color: AppColors.purple,
-                                            width: 2,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              r.title,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                color: AppColors.textDark,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              r.note ?? '-',
-                                              style: TextStyle(
-                                                color: AppColors.textDark
-                                                    .withOpacity(0.8),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              timeText,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w700,
-                                                color: AppColors.purple,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                    return TaskCard(
+                                      reminder: r,
+                                      borderColor: _borderByCategory(
+                                        r.category,
                                       ),
+                                      timeText: timeText,
+
+                                      readOnly: true, // ✅ KUNCI UTAMA
+
+                                      onTap: null,
+                                      onToggleDone: null,
+                                      onDelete: null,
                                     );
                                   },
                                 ),

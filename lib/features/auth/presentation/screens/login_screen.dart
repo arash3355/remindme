@@ -25,18 +25,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _login() async {
-    final email = _emailCtrl.text.trim();
-    final pass = _passCtrl.text;
-
-    await ref
+    final success = await ref
         .read(authControllerProvider.notifier)
-        .signIn(email: email, password: pass);
+        .signIn(email: _emailCtrl.text.trim(), password: _passCtrl.text);
 
     if (!mounted) return;
 
-    if (ref.read(authControllerProvider).errorMessage == null) {
-      context.go('/tasks');
-      // ignore: dead_code
+    if (success) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Login berhasil')));
+
+      context.go('/profile'); // BUKAN task
     } else {
       final err = ref.read(authControllerProvider).errorMessage;
       ScaffoldMessenger.of(
@@ -69,7 +69,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         GestureDetector(
-                          onTap: () => context.pop(),
+                          onTap: () => context.pop('/profile'),
                           child: const Text(
                             '< Back',
                             style: TextStyle(
@@ -242,10 +242,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ),
     );
   }
-}
-
-extension on AsyncValue<void> {
-  Null get errorMessage => null;
 }
 
 class _Field extends StatelessWidget {

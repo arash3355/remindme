@@ -1,3 +1,5 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/remote/auth_remote_datasource.dart';
 
@@ -12,12 +14,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> signUp({
-    required String username,
-    required String email,
-    required String password,
-  }) {
-    return remote.signUp(username: username, email: email, password: password);
+  Future<void> signUp({required String email, required String password}) async {
+    final res = await Supabase.instance.client.auth.signUp(
+      email: email,
+      password: password,
+    );
+
+    if (res.user == null) {
+      throw Exception('Signup gagal');
+    }
   }
 
   @override

@@ -48,18 +48,24 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       return;
     }
 
-    await ref
-        .read(authControllerProvider.notifier)
-        .signUp(username: username, email: email, password: pass);
+    try {
+      await ref
+          .read(authControllerProvider.notifier)
+          .signUp(username: username, email: email, password: pass);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    ref.read(authControllerProvider);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sign up berhasil. Silakan login.')),
+      );
+      context.pop();
+    } catch (e) {
+      if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sign up berhasil. Silakan login.')),
-    );
-    context.pop();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   @override
@@ -259,8 +265,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     );
   }
 }
-
-extension on AsyncValue<void> {}
 
 class _Field extends StatelessWidget {
   const _Field({

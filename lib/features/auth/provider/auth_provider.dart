@@ -1,79 +1,69 @@
-import 'dart:async';
-
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../data/datasources/remote/auth_remote_datasource.dart';
-import '../data/repositories/auth_repository_impl.dart';
-import '../domain/repositories/auth_repository.dart';
+import 'auth_state.dart';
 
-part 'auth_provider.g.dart';
+final authControllerProvider = NotifierProvider<AuthController, AuthUiState>(
+  AuthController.new,
+);
 
-@riverpod
-SupabaseClient supabaseClient(Ref ref) {
-  return Supabase.instance.client;
-}
-
-@riverpod
-AuthRemoteDatasource authRemoteDatasource(Ref ref) {
-  return AuthRemoteDatasource(ref.read(supabaseClientProvider));
-}
-
-@riverpod
-AuthRepository authRepository(Ref ref) {
-  return AuthRepositoryImpl(ref.read(authRemoteDatasourceProvider));
-}
-
-/// stream auth state supabase
-@riverpod
-Stream<AuthState> authSession(Ref ref) {
-  final client = ref.read(supabaseClientProvider);
-  return client.auth.onAuthStateChange;
-}
-
-/// controller for login/signup/signout/reset
-@riverpod
-class AuthController extends _$AuthController {
+class AuthController extends Notifier<AuthUiState> {
   @override
-  Future<void> build() async {
-    // do nothing
+  AuthUiState build() {
+    return const AuthUiState();
   }
 
-  Future<void> signIn({required String email, required String password}) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await ref
-          .read(authRepositoryProvider)
-          .signIn(email: email, password: password);
-    });
+  // ================= LOGIN =================
+  Future<bool> signIn({required String email, required String password}) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    try {
+      await Supabase.instance.client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      state = state.copyWith(isLoading: false);
+      return true;
+    } on AuthApiException catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.message);
+      return false;
+    } catch (_) {
+      state = state.copyWith(isLoading: false, errorMessage: 'Login gagal');
+      return false;
+    }
   }
 
+  // ================= SIGN UP =================
   Future<void> signUp({
     required String username,
     required String email,
     required String password,
   }) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await ref
-          .read(authRepositoryProvider)
-          .signUp(username: username, email: email, password: password);
-    });
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    try {
+      await Supabase.instance.client.auth.signUp(
+        email: email,
+        password: password,
+        data: {
+          'username': username, // 🔑 untuk ProfileScreen
+        },
+      );
+
+      state = state.copyWith(isLoading: false);
+    } on AuthApiException catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.message);
+      rethrow;
+    } catch (_) {
+      state = state.copyWith(isLoading: false, errorMessage: 'Sign up gagal');
+      rethrow;
+    }
   }
 
+  // ================= LOGOUT =================
   Future<void> signOut() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await ref.read(authRepositoryProvider).signOut();
-    });
-  }
-
-  Future<void> sendResetPasswordEmail({required String email}) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await ref
-          .read(authRepositoryProvider)
-          .sendResetPasswordEmail(email: email);
-    });
+    await Supabase.instance.client.auth.signOut();
+    state = const AuthUiState();
   }
 }
