@@ -139,7 +139,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: InkWell(
-                                  onTap: () => context.push('/forgot'),
+                                  onTap: () => context.push('/forgot-email'),
                                   child: Text(
                                     'Forgot Password',
                                     style: TextStyle(
